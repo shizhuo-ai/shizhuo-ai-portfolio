@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>史卓的AI产品库 — AI产品与流量策略</title>
+  <meta name="description" content="史卓的AI产品库 — AI工具、产品案例与流量策略全解析，助你打通产品→平台→流量闭环。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050508; --bg2: #0a0a12;
+      --surface: rgba(255,255,255,0.04); --surface-hover: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08); --border-bright: rgba(255,255,255,0.18);
+      --text: #f0f0f5; --text-muted: rgba(240,240,245,0.45); --text-dim: rgba(240,240,245,0.25);
+      --accent: #2997ff; --accent2: #30d158; --accent3: #ff375f; --accent4: #bf5af2;
+      --glow: rgba(41,151,255,0.15);
+      --radius: 18px; --radius-sm: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px; line-height: 1.6;
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 40px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(5,5,8,0.72); backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid var(--border); transition: background 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Noto Serif SC', serif; font-weight: 600; font-size: 15px;
+      letter-spacing: 0.02em; color: var(--text); text-decoration: none;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo .dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 8px var(--accent); animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 400; letter-spacing: 0.02em; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--accent); color: #fff !important; padding: 6px 16px; border-radius: 20px; font-size: 13px !important; font-weight: 500 !important; transition: opacity 0.2s, transform 0.2s !important; }
+    .nav-cta:hover { opacity: 0.85; transform: scale(1.03); }
+
+    /* ─── Hero ─── */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 120px 24px 80px; position: relative; overflow: hidden;
+    }
+    .hero::after { content: ''; position: absolute; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(41,151,255,0.08) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; animation: drift 12s ease-in-out infinite; }
+    .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(41,151,255,0.12), transparent 70%); top: -100px; left: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(191,90,242,0.1), transparent 70%); bottom: -50px; right: -50px; animation-delay: -6s; }
+    .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(48,209,88,0.08), transparent 70%); top: 40%; right: 10%; animation-delay: -3s; }
+    @keyframes drift { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-20px) scale(1.05)} 66%{transform:translate(-20px,30px) scale(0.95)} }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(41,151,255,0.1); border: 1px solid rgba(41,151,255,0.25);
+      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 500;
+      color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 32px; position: relative; z-index: 1; animation: fadeUp 0.8s ease both;
+    }
+    .hero-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s ease-in-out infinite; }
+
+    .hero-title {
+      font-family: 'Noto Serif SC', serif; font-size: clamp(48px,8vw,96px);
+      font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;
+      margin-bottom: 24px; position: relative; z-index: 1; animation: fadeUp 0.8s 0.1s ease both;
+    }
+    .hero-title .gradient-text { background: linear-gradient(135deg,#fff 0%,rgba(255,255,255,.6) 50%,var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-title .accent-word { background: linear-gradient(135deg,var(--accent) 0%,var(--accent4) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: clamp(16px,2.5vw,20px); color: var(--text-muted); max-width: 560px; line-height: 1.7; margin-bottom: 48px; position: relative; z-index: 1; animation: fadeUp 0.8s 0.2s ease both; }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; animation: fadeUp 0.8s 0.3s ease both; }
+    .btn-primary { background: var(--accent); color: #fff; padding: 14px 32px; border-radius: 30px; font-size: 15px; font-weight: 500; text-decoration: none; transition: all 0.25s; box-shadow: 0 0 30px rgba(41,151,255,0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(41,151,255,0.45); }
+    .btn-ghost { background: var(--surface); color: var(--text); padding: 14px 32px; border-radius: 30px; font-size: 15px; font-weight: 400; text-decoration: none; border: 1px solid var(--border-bright); backdrop-filter: blur(12px); transition: all 0.25s; }
+    .btn-ghost:hover { background: var(--surface-hover); transform: translateY(-2px); }
+    .scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text-dim); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; animation: fadeUp 1s 0.8s ease both; }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom,var(--text-dim),transparent); animation: scrollLine 2s ease-in-out infinite; }
+    @keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+
+    /* ─── Section Base ─── */
+    section { padding: 120px 24px; max-width: 1200px; margin: 0 auto; }
+    .section-label { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .section-label::before { content: ''; width: 20px; height: 1px; background: var(--accent); }
+    .section-title { font-family: 'Noto Serif SC', serif; font-size: clamp(32px,5vw,56px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .section-desc { font-size: 17px; color: var(--text-muted); max-width: 520px; line-height: 1.7; margin-bottom: 64px; }
+    .section-divider { width: 100%; height: 1px; background: linear-gradient(to right,transparent,var(--border),transparent); }
+
+    /* ─── Stats ─── */
+    .stats-bar { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 80px auto 0; max-width: 800px; }
+    .stat-item { flex: 1; min-width: 160px; padding: 28px 24px; text-align: center; border-right: 1px solid var(--border); position: relative; }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: 'Space Mono',monospace; font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+    .stat-num .gradient { background: linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+    /* ─── Service ─── */
+    #service { position: relative; }
+    .service-intro { max-width: 700px; margin-bottom: 64px; }
+    .service-problem {
+      background: linear-gradient(135deg, rgba(255,55,95,0.08), rgba(255,55,95,0.02));
+      border: 1px solid rgba(255,55,95,0.15);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 48px;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .service-problem strong { color: var(--text); font-weight: 500; }
+    .service-blocks { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 48px; }
+    .service-block {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 28px; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .service-block::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 60%); pointer-events: none; }
+    .service-block:hover { border-color: var(--border-bright); background: var(--surface-hover); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .service-block-num { font-family: 'Space Mono',monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 14px; }
+    .service-block h3 { font-family: 'Noto Serif SC',serif; font-size: 17px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.01em; }
+    .service-block p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+    .service-target {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 28px 32px; margin-bottom: 48px;
+    }
+    .service-target-title { font-family: 'Noto Serif SC',serif; font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--accent2); }
+    .service-target ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .service-target ul li { font-size: 14px; color: var(--text-muted); padding-left: 20px; position: relative; }
+    .service-target ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent2); font-size: 12px; }
+    .service-why {
+      background: linear-gradient(135deg, rgba(41,151,255,0.06), rgba(48,209,88,0.04));
+      border: 1px solid rgba(41,151,255,0.12);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+    }
+    .service-why p { font-size: 15px; color: var(--text-muted); line-height: 1.8; }
+    .service-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent4));
+      color: #fff; padding: 14px 32px; border-radius: 30px;
+      font-size: 15px; font-weight: 500; text-decoration: none;
+      margin-top: 40px; transition: all 0.25s;
+      box-shadow: 0 0 30px rgba(41,151,255,0.3);
+    }
+    .service-cta:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 40px rgba(41,151,255,0.5); }
+
+    /* ─── Thinking ─── */
+    .thinking-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 20px; }
+    .thinking-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; position: relative; overflow: hidden; transition: all 0.3s; }
+    .thinking-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 60%); pointer-events: none; }
+    .thinking-card:hover { border-color: var(--border-bright); background: var(--surface-hover); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 20px; }
+    .card-icon.blue { background: rgba(41,151,255,0.15); }
+    .card-icon.green { background: rgba(48,209,88,0.15); }
+    .card-icon.purple { background: rgba(191,90,242,0.15); }
+    .card-icon.red { background: rgba(255,55,95,0.15); }
+    .thinking-card h3 { font-family: 'Noto Serif SC',serif; font-size: 18px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.01em; }
+    .thinking-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+    /* ─── Products Timeline ─── */
+    .timeline { position: relative; padding-left: 32px; }
+    .timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(to bottom,var(--accent),var(--accent4),transparent); }
+    .timeline-item { position: relative; margin-bottom: 48px; }
+    .timeline-item::before { content: ''; position: absolute; left: -36px; top: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); border: 2px solid var(--bg); }
+    .timeline-date { font-family: 'Space Mono',monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 12px; }
+    .product-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+    .product-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(41,151,255,0.04) 0%,transparent 50%); opacity: 0; transition: opacity 0.3s; }
+    .product-card:hover { border-color: rgba(41,151,255,0.3); transform: translateX(6px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+    .product-card:hover::after { opacity: 1; }
+    .product-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+    .tag-new { background: rgba(48,209,88,0.12); color: var(--accent2); border: 1px solid rgba(48,209,88,0.2); }
+    .tag-featured { background: rgba(41,151,255,0.12); color: var(--accent); border: 1px solid rgba(41,151,255,0.2); }
+    .tag-tool { background: rgba(191,90,242,0.12); color: var(--accent4); border: 1px solid rgba(191,90,242,0.2); }
+    .product-name { font-family: 'Noto Serif SC',serif; font-size: 20px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .product-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+    .product-arrow { color: var(--text-dim); font-size: 20px; transition: all 0.3s; margin-top: 4px; }
+    .product-card:hover .product-arrow { color: var(--accent); transform: translateX(4px); }
+
+    /* ─── Cases ─── */
+    .cases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap: 24px; }
+    .case-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all 0.35s; cursor: pointer; position: relative; }
+    .case-card:hover { border-color: var(--border-bright); transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .case-visual { height: 200px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .case-visual-1 { background: linear-gradient(135deg,#0a1628 0%,#1a2a4a 50%,#0d1f3c 100%); }
+    .case-visual-2 { background: linear-gradient(135deg,#0d1a0d 0%,#1a3a1a 50%,#0a1a0a 100%); }
+    .case-visual-3 { background: linear-gradient(135deg,#1a0a28 0%,#2a1a4a 50%,#1a0d3c 100%); }
+    .case-visual-icon { font-size: 56px; opacity: 0.6; filter: drop-shadow(0 0 20px currentColor); transition: all 0.3s; }
+    .case-card:hover .case-visual-icon { opacity: 0.9; transform: scale(1.1); }
+    .case-product-badge { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; font-size: 11px; color: var(--text-muted); }
+    .case-body { padding: 24px; }
+    .case-title { font-family: 'Noto Serif SC',serif; font-size: 17px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .case-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; }
+    .case-meta { display: flex; align-items: center; justify-content: space-between; }
+    .case-result { font-size: 12px; color: var(--accent2); font-weight: 500; }
+    .case-link { font-size: 12px; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 4px; transition: gap 0.2s; }
+    .case-link:hover { gap: 8px; }
+
+    /* ─── Contact ─── */
+    #contact { text-align: center; }
+    .contact-wrapper { max-width: 900px; margin: 0 auto; }
+    .contact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; margin-top: 48px; }
+    .contact-qr-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; text-align: center; }
+    .contact-qr-card h3 { font-family: 'Noto Serif SC',serif; font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .contact-qr-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .qr-wrapper { display: inline-block; background: #fff; padding: 12px; border-radius: 12px; }
+    .qr-wrapper img { width: 180px; height: 180px; display: block; }
+    .qr-hint { margin-top: 12px; font-size: 12px; color: var(--text-dim); }
+    .contact-info-cards { display: flex; flex-direction: column; gap: 16px; }
+    .contact-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; text-decoration: none; color: var(--text); transition: all 0.3s; display: flex; align-items: center; gap: 16px; }
+    .contact-card:hover { border-color: var(--border-bright); background: var(--surface-hover); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
+    .contact-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .contact-card-info .label { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+    .contact-card-info .value { font-size: 12px; color: var(--text-muted); }
+
+    /* ─── Footer ─── */
+    footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text-dim); font-size: 13px; }
+    footer a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--text); }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── Cursor glow ─── */
+    .cursor-glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle,rgba(41,151,255,0.06) 0%,transparent 70%); pointer-events: none; z-index: 0; transform: translate(-50%,-50%); }
+
+    /* ─── Mobile ─── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 80px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .product-card { grid-template-columns: 1fr; }
+      .product-arrow { display: none; }
+      .stats-bar { flex-direction: column; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-item:last-child { border-bottom: none; }
+      .cases-grid { grid-template-columns: 1fr; }
+      .contact-split { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-logo"><span class="dot"></span>史卓的AI产品库</a>
+    <ul class="nav-links">
+      <li><a href="#service">服务</a></li>
+      <li><a href="#thinking">思路</a></li>
+      <li><a href="#products">产品</a></li>
+      <li><a href="#cases">案例</a></li>
+      <li><a href="#contact" class="nav-cta">联系我</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+    <div class="hero-eyebrow">AI 产品实验室 · 持续更新中</div>
+    <h1 class="hero-title">
+      <span class="gradient-text">用 AI 重新定义</span><br />
+      <span class="accent-word">产品的边界</span>
+    </h1>
+    <p class="hero-sub">
+      这里是史卓的 AI 产品库——记录每一个从想法到落地的过程，分享真实可用的 AI 工具与流量策略解决方案。
+    </p>
+    <div class="hero-actions">
+      <a href="#service" class="btn-primary">了解服务 →</a>
+      <a href="#products" class="btn-ghost">探索产品</a>
+    </div>
+    <div class="stats-bar reveal">
+      <div class="stat-item">
+        <div class="stat-num"><span id="counter1">0</span><span class="gradient">+</span></div>
+        <div class="stat-label">AI 产品</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num"><span id="counter2">0</span><span class="gradient">+</span></div>
+        <div class="stat-label">落地案例</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num"><span class="gradient">∞</span></div>
+        <div class="stat-label">持续迭代</div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>向下探索</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── Service ─── -->
+  <section id="service">
+    <div class="section-label">我的服务</div>
+    <h2 class="section-title reveal">产品上架与流量打通<br />策略咨询</h2>
+    <p class="section-desc reveal" style="margin-bottom:32px">不追热点，不堆功能。每一个产品都从真实问题出发，用最小的复杂度解决最核心的需求。</p>
+
+    <div class="service-problem reveal">
+      <strong>你是否遇到过这样的困惑？</strong><br /><br />
+      产品做出来了，却不知道该上架哪个平台？<br />
+      课程、资料包、手册准备好了，却卡在"怎么卖"这一步？<br />
+      内容发了、账号也做了，流量就是不来？<br /><br />
+      我的服务，就是帮你解决从"产品在哪卖"到"流量怎么来"的全流程问题。<br /><br />
+      我不只是告诉你"可以上抖音"，而是结合你的<strong>产品类型、资质条件、目标人群</strong>，帮你制定真正可落地的平台策略与流量路径。
+    </div>
+
+    <div class="service-blocks">
+      <div class="service-block reveal">
+        <div class="service-block-num">01</div>
+        <h3>🔍 产品类目诊断与平台匹配</h3>
+        <p>分析你的产品类型（课程、资料包、咨询服务、实物产品等），判断适合的渠道：抖音小店、小红书店铺、视频号、独立站、闲鱼、微信公众号付费阅读等。根据你的资质条件，给出最轻量化、最快速的启动方案。</p>
+      </div>
+      <div class="service-block reveal">
+        <div class="service-block-num">02</div>
+        <h3>🚀 流量路径设计与协同打法</h3>
+        <p>设计"内容+店铺+私域"的组合路径，解决单一平台受限问题：比如视频号无法挂载课程时，如何通过公众号付费文章+私信引导完成闭环。多账号协同策略，最大化利用每天有限的发布资源。</p>
+      </div>
+      <div class="service-block reveal">
+        <div class="service-block-num">03</div>
+        <h3>💰 低成本启动方案</h3>
+        <p>不需要成为网红，不需要大量粉丝。从"闲鱼挂单""本地商家转介绍""问答平台引流"等零成本方式开始，逐步积累客户。帮助你在现有资源下，快速跑通第一单、建立正向循环。</p>
+      </div>
+      <div class="service-block reveal">
+        <div class="service-block-num">04        <h3>🎯 项目孵化与放大路径</h3>
+        <p>如果你已经跑出小结果想放大，我会帮你规划：公私域一体化（公众号+独立站+企微）；内容平台矩阵（小红书+抖音+知乎）；从个人项目到可复制、可团队化的系统搭建。</p>
+      </div>
+    </div>
+
+    <div class="service-target reveal">
+      <div class="service-target-title">🎯 我的服务对象</div>
+      <ul>
+        <li>中高端个人创业者 / 小型团队：有产品、有内容，但缺乏平台策略与流量思路</li>
+        <li>B端企业 / 本地商家：已有产品或服务，想通过AI工具+内容实现线上获客</li>
+        <li>希望"项目+人"一起孵化的潜力创作者</li>
+      </ul>
+    </div>
+
+    <div class="service-why reveal">
+      <p><strong style="color:var(--text)">💡 为什么找我</strong><br /><br />
+      我不是给你一个"通用的运营模板"，而是：<br />
+      结合你实际资质、资源、产品类型，给出真正能落地的路径；<br />
+      从"第一篇付费文章怎么挂"到"闲鱼怎么定价"，都有实操经验；<br />
+      注重效率与结果：能跑的路径快速跑通，跑不通的直接规避，不浪费时间试错。</p>
+    </div>
+
+    <div style="text-align:center">
+      <a href="#contact" class="service-cta">找我聊聊 →</a>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── Thinking ─── -->
+  <section id="thinking">
+    <div class="section-label">我的思路</div>
+    <h2 class="section-title reveal">做 AI 产品，<br />我是这样想的</h2>
+    <p class="section-desc reveal">不追热点，不堆功能。每一个产品都从真实问题出发，用最小的复杂度解决最核心的需求。</p>
+    <div class="thinking-grid">
+      <div class="thinking-card reveal">
+        <div class="card-icon blue">🎯</div>
+        <h3>问题优先</h3>
+        <p>先找到真实存在的痛点，再考虑用什么技术解决。AI 是工具，不是目的。</p>
+      </div>
+      <div class="thinking-card reveal">
+        <div class="card-icon green">⚡</div>
+        <h3>快速验证</h3>
+        <p>用最小可行版本测试假设，数据说话。不在没有验证的方向上过度投入。</p>
+      </div>
+      <div class="thinking-card reveal">
+        <div class="card-icon purple">🔄</div>
+        <h3>持续迭代</h3>
+        <p>产品不是做完就结束的。每一次用户反馈都是下一个版本的起点。</p>
+      </div>
+      <div class="thinking-card reveal">
+        <div class="card-icon red">✨</div>
+        <h3>体验至上</h3>
+        <p>再强大的 AI 能力，如果用起来费劲，就是失败的产品。细节决定成败。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── Products ─── -->
+  <section id="products">
+    <div class="section-label">产品库</div>
+    <h2 class="section-title reveal">持续上新的<br />AI 产品</h2>
+    <p class="section-desc reveal">按时间排列，最新的在最上面。每个产品都有对应的真实案例。</p>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2026 · 03</div>
+        <div class="product-card">
+          <div>
+            <div class="product-tag tag-new">🆕 最新上线</div>
+            <div class="product-name">AI 智能客服系统</div>
+            <div class="product-desc">基于大模型的企业级客服解决方案，支持多轮对话、知识库接入、情绪识别，响应时间 &lt;1s。</div>
+          </div>
+          <div class="product-arrow">→</div>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2026 · 02</div>
+        <div class="product-card">
+          <div>
+            <div class="product-tag tag-featured">⭐ 主打产品</div>
+            <div class="product-name">内容自动化工作流</div>
+            <div class="product-desc">从选题到发布全链路自动化，支持小红书、公众号、抖音多平台适配，日产内容 50+ 篇。</div>
+          </div>
+          <div class="product-arrow">→</div>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2026 · 01</div>
+        <div class="product-card">
+          <div>
+            <div class="product-tag tag-tool">🛠 工具</div>
+            <div class="product-name">AI 数据分析助手</div>
+            <div class="product-desc">上传 Excel/CSV，自然语言提问，自动生成图表与洞察报告。非技术人员也能用的数据分析工具。</div>
+          </div>
+          <div class="product-arrow">→</div>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2025 · 12</div>
+        <div class="product-card">
+          <div>
+            <div class="product-tag tag-tool">🛠 工具</div>
+            <div class="product-name">个人 AI 助理搭建方案</div>
+            <div class="product-desc">基于 OpenClaw 的个人 AI 助理完整搭建方案，接入日历、邮件、消息，真正的 24h 数字分身。</div>
+          </div>
+          <div class="product-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── Cases ─── -->
+  <section id="cases">
+    <div class="section-label">案例</div>
+    <h2 class="section-title reveal">真实落地，<br />有据可查</h2>
+    <p class="section-desc reveal">每个案例都对应一个具体产品，记录从问题到结果的完整过程。</p>
+    <div class="cases-grid">
+      <div class="case-card reveal">
+        <div class="case-visual case-visual-1">
+          <div class="case-visual-icon">🤖</div>
+          <div class="case-product-badge">AI 智能客服</div>
+        </div>
+        <div class="case-body">
+          <div class="case-title">某电商品牌客服降本增效</div>
+          <div class="case-desc">接入 AI 客服后，人工客服工作量减少 70%，客户满意度从 82% 提升至 94%，响应时效从分钟级降至秒级。</div>
+          <div class="case-meta">
+            <span class="case-result">客满度 +12%</span>
+            <a href="#" class="case-link">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+      <div class="case-card reveal">
+        <div class="case-visual case-visual-2">
+          <div class="case-visual-icon">✍️</div>
+          <div class="case-product-badge">内容自动化</div>
+        </div>
+        <div class="case-body">
+          <div class="case-title">自媒体团队内容产能翻倍</div>
+          <div class="case-desc">3 人团队借助内容自动化工作流，月产内容从 60 篇提升至 200+ 篇，爆款率提升 35%，人力成本降低 40%。</div>
+          <div class="case-meta">
+            <span class="case-result">产能 +233%</span>
+            <a href="#" class="case-link">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+      <div class="case-card reveal">
+        <div class="case-visual case-visual-3">
+          <div class="case-visual-icon">📊</div>
+          <div class="case-product-badge">数据分析助手</div>
+        </div>
+        <div class="case-body">
+          <div class="case-title">运营团队告别 Excel 地狱</div>
+          <div class="case-desc">原本需要 2 天的月度数据报告，现在 20 分钟完成。非技术运营人员独立完成数据分析，决策效率大幅提升。</div>
+          <div class="case-meta">
+            <span class="case-result">效率 +600%</span>
+            <a href="#" class="case-link">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── Contact ─── -->
+  <section id="contact">
+    <div class="section-label" style="justify-content:center">联系我</div>
+    <h2 class="section-title reveal">有想法？<br />来聊聊</h2>
+    <p class="section-desc reveal" style="margin:0 auto;text-align:center">无论是产品合作、定制开发，还是只是想交流 AI 的想法，都欢迎联系。</p>
+    <div class="contact-split">
+      <div class="contact-qr-card reveal">
+        <h3>扫码加我微信</h3>
+        <p>startker001 · 备注「AI产品」优先通过</p>
+        <div class="qr-wrapper">
+          <img src="wechat-qr.jpg" alt="微信二维码" />
+        </div>
+        <div class="qr-hint">长按识别 · 24小时内回复</div>
+      </div>
+      <div class="contact-info-cards">
+        <a href="#" class="contact-card reveal">
+          <div class="contact-card-icon" style="background:rgba(41,151,255,0.12)">💬</div>
+          <div class="contact-card-info">
+            <div class="label">微信</div>
+            <div class="value">startker001</div>
+          </div>
+        </a>
+        <a href="#" class="contact-card reveal">
+          <div class="contact-card-icon" style="background:rgba(48,209,88,0.12)">📧</div>
+          <div class="contact-card-info">
+            <div class="label">邮件</div>
+            <div class="value">发送邮件交流</div>
+          </div>
+        </a>
+        <a href="#" class="contact-card reveal">
+          <div class="contact-card-icon" style="background:rgba(191,90,242,0.12)">📱</div>
+          <div class="contact-card-info">
+            <div class="label">小红书</div>
+            <div class="value">@史卓</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 史卓的AI产品库 · 持续更新中</p>
+    <p style="margin-top:8px;font-size:12px">
+      <a href="#service">服务</a> ·
+      <a href="#thinking">思路</a> ·
+      <a href="#products">产品</a> ·
+      <a href="#cases">案例</a> ·
+      <a href="#contact">联系</a>
+    </p>
+  </footer>
+
+  <script>
+    // Cursor glow
+    const glow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', e => { glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => observer.observe(el));
+
+    // Counter
+    function animateCounter(el, target, duration = 1500) {
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start += step;
+        el.textContent = start >= target ? target : Math.floor(start);
+        if (start >= target) clearInterval(timer);
+      }, 16);
+    }
+    const statsBar = document.querySelector('.stats-bar');
+    const statsObserver = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        animateCounter(document.getElementById('counter1'), 12);
+        animateCounter(document.getElementById('counter2'), 20);
+        statsObserver.disconnect();
+      }
+    }, { threshold: 0.5 });
+    if (statsBar) statsObserver.observe(statsBar);
+
+    // Nav scroll
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.background = window.scrollY > 60 ? 'rgba(5,5,8,0.92)' : 'rgba(5,5,8,0.72)';
+    });
+  </script>
+</body>
+</html>
