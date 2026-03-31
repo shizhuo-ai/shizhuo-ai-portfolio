@@ -249,13 +249,36 @@
     .cursor-glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle,rgba(41,151,255,0.06) 0%,transparent 70%); pointer-events: none; z-index: 0; transform: translate(-50%,-50%); }
 
     /* ─── Service Grid ─── */
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
-    .svc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 24px; transition: all 0.3s; cursor: default; }
-    .svc-card:hover { border-color: var(--border-bright); background: var(--surface-hover); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
-    .svc-icon { font-size: 28px; margin-bottom: 12px; }
-    .svc-name { font-family: 'Noto Serif SC',serif; font-size: 15px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
-    .svc-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
-    @media (max-width: 640px) { .services-grid { grid-template-columns: 1fr; } }
+    .services-grid { display: flex; flex-direction: column; gap: 12px; }
+    .svc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0; transition: all 0.3s; cursor: pointer; overflow: hidden; }
+    .svc-card:hover { border-color: var(--border-bright); }
+    .svc-card.active { border-color: var(--accent); background: var(--surface-hover); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+    .svc-header { display: flex; align-items: center; gap: 16px; padding: 20px 24px; user-select: none; }
+    .svc-header:hover { background: rgba(255,255,255,0.02); }
+    .svc-icon { font-size: 26px; flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border-radius: 12px; }
+    .svc-name { font-family: 'Noto Serif SC',serif; font-size: 16px; font-weight: 600; flex: 1; letter-spacing: -0.01em; }
+    .svc-toggle { color: var(--text-dim); font-size: 18px; transition: transform 0.3s; flex-shrink: 0; }
+    .svc-card.active .svc-toggle { transform: rotate(45deg); color: var(--accent); }
+    .svc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .svc-body-inner { padding: 0 24px 28px 88px; }
+    .svc-body .svc-problem { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 24px; padding: 16px 20px; background: rgba(255,55,95,0.06); border-left: 3px solid rgba(255,55,95,0.3); border-radius: 0 8px 8px 0; }
+    .svc-body .svc-problem strong { color: var(--text); }
+    .svc-body .svc-section-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 12px; margin-top: 24px; letter-spacing: 0.02em; }
+    .svc-body .svc-section-title:first-child { margin-top: 0; }
+    .svc-body .svc-item { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 12px; padding-left: 16px; position: relative; }
+    .svc-body .svc-item::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .svc-body .svc-item strong { color: var(--text); }
+    .svc-body .svc-target { margin-top: 24px; padding: 16px 20px; background: rgba(48,209,88,0.06); border-left: 3px solid rgba(48,209,88,0.3); border-radius: 0 8px 8px 0; }
+    .svc-body .svc-target li { font-size: 13px; color: var(--text-muted); line-height: 1.7; padding-left: 16px; position: relative; list-style: none; margin-bottom: 6px; }
+    .svc-body .svc-target li::before { content: '→'; position: absolute; left: 0; color: var(--accent2); font-size: 12px; }
+    .svc-body .svc-why { margin-top: 24px; font-size: 13px; color: var(--text-muted); line-height: 1.8; padding: 16px 20px; background: rgba(41,151,255,0.06); border-left: 3px solid rgba(41,151,255,0.3); border-radius: 0 8px 8px 0; }
+    .svc-body .svc-why strong { color: var(--text); }
+    @media (max-width: 640px) {
+      .svc-header { padding: 16px 18px; gap: 12px; }
+      .svc-icon { width: 40px; height: 40px; font-size: 22px; }
+      .svc-name { font-size: 14px; }
+      .svc-body-inner { padding: 0 18px 24px 18px; }
+    }
 
     /* ─── Mobile ─── */
     @media (max-width: 768px) {
@@ -331,63 +354,403 @@
     <h2 class="section-title reveal">不只是给你工具<br />而是帮你解决真实问题</h2>
     <p class="section-desc reveal" style="margin-bottom:48px">每一个服务背后都是一套完整的解决方案，从需求诊断到落地执行，全程跟进。</p>
 
-    <div class="services-grid">
-      <div class="svc-card reveal">
-        <div class="svc-icon">💡</div>
-        <div class="svc-name">灵感语料自动沉淀系统</div>
-        <div class="svc-desc">飞书群聊零门槛录入灵感，语音/文字一句话完成。自动化沉淀为结构化知识库，写文案、做选题时 AI 直接调取，记录时不留负担，输出时信手拈来。</div>
+        <div class="services-grid">
+      <!-- 1. 灵感语料自动沉淀系统 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">💡</div>
+          <div class="svc-name">灵感语料自动沉淀系统</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              脑子里灵感不断，却总是来不及记下来就忘了？<br/>
+              随手记了一堆想法，回头再看却零散混乱，根本用不起来？<br/>
+              想建立自己的知识库，但操作太复杂、流程太麻烦，迟迟没有开始？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>零门槛的即时录入</strong>：利用飞书群聊，随时随地通过语音或文字，加一个关键词就能完成录入。</div>
+            <div class="svc-item"><strong>自动化知识沉淀</strong>：预设好的表格字段与自动化流程，每条录入自动生成时间并存入结构化知识库。</div>
+            <div class="svc-item"><strong>独立渠道与高效执行</strong>：搭建专属【分享】群，把"记录灵感"和"日常沟通"彻底分开。</div>
+            <div class="svc-item"><strong>知识库的持续复用</strong>：写公众号时AI直接从库里调取洞察，金句、案例；做短视频文案时有现成观点素材。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>管理者、创业者、创作者：需要随时捕捉灵感</li>
+              <li>知识工作者：希望低成本建立个人语料库</li>
+              <li>任何"想法多但记不住、记了却用不上"的人</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你实际使用的工具与习惯，搭建真正能持续运转的轻量化系统；从群聊怎么建、自动化怎么配，到日常怎么用，都有完整可复制的落地经验。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">📊</div>
-        <div class="svc-name">爆款情报采集系统</div>
-        <div class="svc-desc">复制抖音/小红书视频链接，系统自动提取文案+抓取互动数据，结构化沉淀到表格。AI 分析爆款逻辑，直接反哺选题创作，每次刷视频都不白刷。</div>
+
+      <!-- 2. 爆款情报采集系统 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">📊</div>
+          <div class="svc-name">爆款情报采集系统</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              刷抖音看到爆款视频，想借鉴思路，却只能手动复制粘贴文案，耗时又费力？<br/>
+              收集了一堆对标账号，数据零散在各个平台，想看互动数据还得一个个点进去翻？<br/>
+              想持续产出内容，但选题灵感总是枯竭，不知道最近什么话题能火？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>一键式爆款采集</strong>：复制视频链接粘贴提交，系统自动提取完整文案，无需手动复制。</div>
+            <div class="svc-item"><strong>数据自动抓取与结构化沉淀</strong>：点赞数、评论数等关键互动数据自动抓取，存入多维表格。</div>
+            <div class="svc-item"><strong>选题灵感反哺创作</strong>：爆款素材可直接供AI分析，生成适合你账号的选题方向。</div>
+            <div class="svc-item"><strong>轻量化持续运营</strong>：搭建独立表单入口，15分钟一次性配置，后续零维护。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>内容创作者/博主：需要持续产出，但经常陷入选题瓶颈</li>
+              <li>短视频运营团队：需要系统化追踪竞品、监控热点</li>
+              <li>知识付费/课程开发者：希望洞察用户关注的热门话题</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你实际关注的平台与内容方向，搭建真正能持续运转的情报系统；从表单怎么建到数据怎么用，都有完整的落地经验。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">🔥</div>
-        <div class="svc-name">多平台爆款情报引擎</div>
-        <div class="svc-desc">抖音+小红书多平台统一汇总，一键粘贴链接自动采集文案与互动数据。零人肉整理，15分钟配置后续零维护，让刷视频变成选题燃料。</div>
+
+      <!-- 3. 多平台爆款情报引擎 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">🔥</div>
+          <div class="svc-name">多平台爆款情报引擎</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              每天刷抖音、小红书，看到爆款视频，想借鉴思路，却只能手动复制粘贴文案，一弄就是半小时？<br/>
+              收藏了一堆对标账号，数据散落在各个平台，根本没法系统分析？<br/>
+              想持续产出内容，但选题灵感总是枯竭，不知道从哪找参考？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>一键式爆款采集</strong>：抖音+小红书多平台统一汇总，一键粘贴链接自动采集文案与互动数据。</div>
+            <div class="svc-item"><strong>数据自动抓取与结构化沉淀</strong>：所有对标视频统一汇总，按时间、平台、数据排序。</div>
+            <div class="svc-item"><strong>选题灵感反哺创作</strong>：AI帮你拆解爆款背后的逻辑，给出可直接落地的选题建议。</div>
+            <div class="svc-item"><strong>轻量化持续运营</strong>：15分钟一次性配置，后续零维护。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>内容创作者/博主：需要持续产出，但经常陷入选题瓶颈</li>
+              <li>短视频运营团队：需要系统化追踪竞品、监控热点</li>
+              <li>个人IP打造者：想用更低成本、更高效的方式建立内容灵感库</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你实际关注的平台与内容方向，搭建真正能持续运转的情报系统；注重闭环价值。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">✍️</div>
-        <div class="svc-name">文案模型智能生成引擎</div>
-        <div class="svc-desc">将验证过的爆款文案提炼为标准化模型（SCQA、黄金圈、故事型等），AI 根据选题自动匹配模型生成文案。新人也能产出老手水平，从"从零创作"变为"审稿润色"。</div>
+
+      <!-- 4. 文案模型智能生成引擎 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">✍️</div>
+          <div class="svc-name">文案模型智能生成引擎</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              选题定好了，却对着空白文档发呆，不知道从哪下笔？<br/>
+              写出来的文案时好时坏，完全看状态，今天爆了明天可能就没人看？<br/>
+              团队来了新人，文案水平参差不齐，优秀经验只能靠口口相传，永远没法复制？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>文案模型库建设</strong>：把过去验证过的爆款文案提炼成标准化模型（SCQA、黄金圈、故事型等）。</div>
+            <div class="svc-item"><strong>选题与模型智能匹配</strong>：AI自动根据选题类型匹配合适的文案模型生成文案。</div>
+            <div class="svc-item"><strong>自然语言调度机制</strong>：只需一句指令就能完成从选题到文案生成。</div>
+            <div class="svc-item"><strong>文案质量标准化</strong>：新人也能产出老手水平的文案。</div>
+            <div class="svc-item"><strong>持续优化与经验沉淀</strong>：每次发现新的爆款文案都可以提炼成新模型加入库中。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>内容团队/新媒体运营：需要高频产出，但团队水平参差不齐</li>
+              <li>个人创作者/博主：希望提升文案质量</li>
+              <li>知识付费从业者：需要持续产出课程宣传文案</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你实际的内容类型和选题方向，帮你搭建真正适合你的文案模型库；注重可复制性。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">📈</div>
-        <div class="svc-name">短视频数据分析助手</div>
-        <div class="svc-desc">截图发群即完成数据录入，每周三 AI 定时分析并推送报告。直接告诉你"哪类选题好、下周做什么"，选题决策不再靠猜。</div>
+
+      <!-- 5. 短视频数据分析助手 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">📈</div>
+          <div class="svc-name">短视频数据分析助手</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              发完视频只看播放量，不知道哪个选题好、哪个选题差，下次该发什么全靠猜？<br/>
+              每周复盘数据，要手动复制粘贴、整理表格，一弄就是一两个小时？<br/>
+              团队几个人，对数据的理解各不一样，永远达不成共识？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>极简数据录入</strong>：手机截图抖音后台数据，直接发送到专属数据群，操作不过3秒钟。</div>
+            <div class="svc-item"><strong>AI智能数据分析</strong>：每周三上午9:30自动分析本周发布数据，直接告诉你结论。</div>
+            <div class="svc-item"><strong>可执行的选题建议</strong>：直接推荐3个具体选题方向，拿来就能用。</div>
+            <div class="svc-item"><strong>团队信息同步机制</strong>：分析结果准时推送到群，用数据统一认知。</div>
+            <div class="svc-item"><strong>数据驱动的创作闭环</strong>：AI推荐的选题可直接进入选题管理表。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>短视频运营团队：需要定期复盘账号数据，但缺乏专业数据分析能力</li>
+              <li>校区/本地商家：有固定账号运营，需要持续跟踪哪些选题效果好</li>
+              <li>个人创作者：希望用数据指导创作</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你实际账号的内容方向和数据情况，搭建真正适合你的数据分析系统；注重可执行性。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">🎙</div>
-        <div class="svc-name">直播数据分析助手</div>
-        <div class="svc-desc">截图发群录入直播数据，每周 AI 自动复盘所有场次。直接告诉你"哪场做对了、哪里该优化、下场怎么播"，复盘会从2小时缩到10分钟。</div>
+
+      <!-- 6. 直播数据分析助手 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">🎙</div>
+          <div class="svc-name">直播数据分析助手</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              直播结束了，只知道卖得好或卖得差，但不知道为什么好、为什么差？<br/>
+              想复盘优化，但数据导出、表格整理、逐项对比，一弄就是两小时？<br/>
+              团队几个人复盘，永远达不成共识，下一场直播该咋播还是咋播？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>极简数据录入</strong>：每场直播结束后，手机截图直播后台数据，直接发送到专属数据群。</div>
+            <div class="svc-item"><strong>AI智能直播复盘</strong>：每周自动分析所有直播数据，告诉你哪场表现最好、哪场最差。</div>
+            <div class="svc-item"><strong>可执行的优化建议</strong>：直接给出具体可落地的优化方向。</div>
+            <div class="svc-item"><strong>团队复盘效率升级</strong>：每周复盘会从2小时缩到10分钟。</div>
+            <div class="svc-item"><strong>数据驱动的直播迭代</strong>：从开播→看数据→AI分析→优化调整→开播形成完整闭环。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>直播运营团队：需要定期复盘每场直播数据</li>
+              <li>品牌/商家自播：需要持续优化直播间表现</li>
+              <li>个人主播/达人：希望通过数据指导直播优化</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你实际直播的内容类型、产品特点，搭建真正适合你的数据分析系统；注重可执行性。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">🎬</div>
-        <div class="svc-name">视频排期智能调度系统</div>
-        <div class="svc-desc">统一需求入口+AI自动排期，所有需求透明化、优先级标准化。剪辑人员到点就知道今天该剪什么，完成后自动通知需求方，月底对量5分钟搞定。</div>
+
+      <!-- 7. 视频排期智能调度系统 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">🎬</div>
+          <div class="svc-name">视频排期智能调度系统</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              老师、运营、老板各方都来提剪辑需求，微信私聊、口头交代、表格记录，需求满天飞？<br/>
+              剪辑人员每天被追问"为什么不剪我的"，压力山大，还经常漏剪？<br/>
+              想给团队定个排期规则，但需求优先级总变，人工安排既费时又不公平？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>统一需求入口</strong>：建立专属需求提交表单，所有需求自动汇总到一张表格，漏需求率归零。</div>
+            <div class="svc-item"><strong>AI自动排期</strong>：根据设定的规则自动为每个需求分配剪辑日期和负责人。</div>
+            <div class="svc-item"><strong>每日任务看板</strong>：剪辑人员每天打开"我的今日任务"看板，所有待剪视频一目了然。</div>
+            <div class="svc-item"><strong>进度自动通知</strong>：任务完成后，系统自动通知需求提交人。</div>
+            <div class="svc-item"><strong>一键导出统计</strong>：月底导出"已完成"列表，对量效率提升90%以上。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>内容生产团队：多人提需求、多人剪辑，需求来源分散</li>
+              <li>剪辑部门/剪辑师：一个人对接多个需求方</li>
+              <li>多账号运营团队：同时为多个账号生产内容</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你团队的实际人员配置、需求类型，搭建真正适合你们的排期系统；注重实操闭环。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">👩‍🎓</div>
-        <div class="svc-name">新生线索智能跟进系统</div>
-        <div class="svc-desc">线索统一登记+自动状态追踪，每月1号推送待跟进清单，试听前一天自动提醒，逾期自动督促。沟通记录 AI 整理，老师只管聊，月底复盘5分钟搞定。</div>
+
+      <!-- 8. 新生线索智能跟进系统 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">👩‍🎓</div>
+          <div class="svc-name">新生线索智能跟进系统</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              新生线索散落在微信、Excel、笔记本各处，谁在跟、跟到哪、下一步该做什么，完全不清楚？<br/>
+              老师每月要花一两天时间手动筛选，做表、汇总，大部分时间都花在整理而非跟进上？<br/>
+              试听经常爽约、线索超过一周没跟进就冷了，转化率怎么都提不上去？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>统一线索登记</strong>：所有线索集中管理，30秒录入，责任到人，状态清晰。</div>
+            <div class="svc-item"><strong>自动化月度汇总</strong>：每月1号自动按状态分组筛选，推送待跟进清单。</div>
+            <div class="svc-item"><strong>精准推送待跟进清单</strong>：系统只推送"需要重点跟进的线索"，老师目标清晰。</div>
+            <div class="svc-item"><strong>智能提醒</strong>：试听前一天自动提醒，超过7天没跟进的线索自动督促。</div>
+            <div class="svc-item"><strong>沟通记录AI整理</strong>：老师只需发语音转文字，AI自动整理成清晰的沟通记录。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>教育培训机构：需要跟进试听预约、转化新生</li>
+              <li>本地服务商家（健身、美容、驾校等）：有潜在客户需要长期跟进</li>
+              <li>销售型小团队：需要管理客户线索</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你团队的跟进流程、转化节奏，搭建真正适合你们的线索跟进系统；注重实操闭环。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">📋</div>
-        <div class="svc-name">教师工作反馈系统</div>
-        <div class="svc-desc">微信问卷30秒填日报，每天下午7点 AI 自动汇总+智能分析推送简报。谁做了什么、有什么问题、需要什么协助，管理者5分钟掌握团队全状态。</div>
+
+      <!-- 9. 教师工作反馈系统 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">📋</div>
+          <div class="svc-name">教师工作反馈系统</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              每天追着老师问"今天干了什么""有什么问题"，翻聊天记录汇总，一弄就是一小时？<br/>
+              老师觉得填日报太麻烦，飞书钉钉打开率极低，写日报成了负担？<br/>
+              团队有什么问题不能及时发现，小问题拖成大麻烦？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>极简问卷30秒填完日报</strong>：老师只需在微信点开链接，勾选今日主要工作。</div>
+            <div class="svc-item"><strong>定时自动汇总</strong>：每天下午7:00自动读取当天所有提交的反馈。</div>
+            <div class="svc-item"><strong>AI智能分析</strong>：输出清晰简报，包括整体情况、共性问题、需要协助的事项。</div>
+            <div class="svc-item"><strong>问题当天发现、当天解决</strong>：小问题不过夜，大问题早发现。</div>
+            <div class="svc-item"><strong>月末一键导出</strong>：所有反馈自动存档，月末一键导出。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>教育培训机构校长/管理者：需要了解教师每日工作状态</li>
+              <li>中小型团队负责人：每天要跟进团队工作进展</li>
+              <li>门店店长：需要了解员工每日工作、遇到的问题</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你团队的实际工作内容、管理习惯，搭建真正适合你们的工作反馈系统。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">🎯</div>
-        <div class="svc-name">教研目标智能拆解系统</div>
-        <div class="svc-desc">学期目标自动拆解到每节课，老师群里一问就知道教学目标、重点难点、参考视频。进度实时追踪，新老师入职培训成本降低70%。</div>
+
+      <!-- 10. 教研目标智能拆解系统 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">🎯</div>
+          <div class="svc-name">教研目标智能拆解系统</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              学期目标定好了，但怎么拆解到每节课、每节课要教到什么程度，全靠老师自己琢磨？<br/>
+              老师备课时反复问"这节课教什么""重点是什么""有没有参考视频"？<br/>
+              新老师入职，培训两周还搞不清教学体系，上手慢、出活难？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>教学目标自动拆解</strong>：系统自动将学期目标拆解到每节课，全部清晰列出。</div>
+            <div class="svc-item"><strong>老师自助查询</strong>：老师在群里一问就知道本节课的教学目标、重点难点、参考视频。</div>
+            <div class="svc-item"><strong>教学资源集中沉淀</strong>：所有教学视频、教学法文档统一存入知识库。</div>
+            <div class="svc-item"><strong>教学进度一目了然</strong>：校长打开表格，所有班级的教学进度实时可见。</div>
+            <div class="svc-item"><strong>新老师快速上手</strong>：新老师入职培训成本降低70%。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>教育培训机构校长/教研负责人：需要系统化管理教学目标</li>
+              <li>连锁校区/多班级运营者：需要统一教学标准</li>
+              <li>教研团队：需要将课程体系结构化沉淀</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你机构的课程体系、教学特点，搭建真正适合你们的教研管理系统。
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-icon">🏆</div>
-        <div class="svc-name">教学法标准化执行系统</div>
-        <div class="svc-desc">优秀教学法集中沉淀为标准化库，与教学目标智能关联。老师根据风格自由挑选，按步执行即可达成目标。好经验可复制、可传承，新老师快速上手。</div>
+
+      <!-- 11. 教学法标准化执行系统 -->
+      <div class="svc-card reveal" onclick="toggleSvc(this)">
+        <div class="svc-header">
+          <div class="svc-icon">🏆</div>
+          <div class="svc-name">教学法标准化执行系统</div>
+          <div class="svc-toggle">+</div>
+        </div>
+        <div class="svc-body">
+          <div class="svc-body-inner">
+            <div class="svc-problem">
+              <strong>你是否遇到过这样的困惑？</strong><br/><br/>
+              教学目标定了，但怎么教、用什么方法教，全靠老师自己琢磨，结果十个老师十种教法？<br/>
+              老师备课时不知道用什么教学方法，网上搜半天也找不到合适的？<br/>
+              新老师入职，培训几周还搞不清楚每节课怎么上，老老师的经验只能口口相传？
+            </div>
+            <div class="svc-section-title">🔍 我能为你做什么</div>
+            <div class="svc-item"><strong>教学法集中沉淀</strong>：从B站、抖音等平台抓取优秀教学视频，提炼成标准化的教学法。</div>
+            <div class="svc-item"><strong>教学目标任务清单化</strong>：把抽象的教学目标拆解成每节课的具体任务清单。</div>
+            <div class="svc-item"><strong>教学法与目标智能关联</strong>：系统根据教学目标自动推荐关联的教学法。</div>
+            <div class="svc-item"><strong>老师自助挑选</strong>：老师可以根据自己的风格、班级特点自由挑选教学法。</div>
+            <div class="svc-item"><strong>新老师快速上手</strong>：培训成本降低70%。</div>
+            <div class="svc-item"><strong>教学效果可追溯</strong>：老师上完课可以给教学法打分，写反馈。</div>
+            <div class="svc-section-title">🎯 我的服务对象</div>
+            <ul class="svc-target">
+              <li>教育培训机构校长/教研负责人：希望统一教学标准</li>
+              <li>教学团队：需要系统化的教学法支持</li>
+              <li>连锁校区/多班级运营者：需要统一的教学体系</li>
+            </ul>
+            <div class="svc-why">
+              <strong>💡 为什么找我</strong><br/><br/>
+              结合你机构的课程体系、学生特点，搭建真正适合你们的教学法库；注重实操闭环。
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <script>
+    function toggleSvc(card) {
+      card.classList.toggle('active');
+      const body = card.querySelector('.svc-body');
+      if (card.classList.contains('active')) {
+        body.style.maxHeight = body.scrollHeight + 'px';
+      } else {
+        body.style.maxHeight = null;
+      }
+    }
+    </script>
+
 
     <div class="service-problem reveal" style="margin-top:64px">
       <strong>产品上架与流量打通 · 策略咨询</strong><br /><br />
